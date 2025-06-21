@@ -1,0 +1,33 @@
+---
+// Define the list of brand logos.
+// These are demo logos from placehold.co.
+// Replace these with your actual logo paths (e.g., '/assets/your-brand-logo.svg')
+const logos = [
+  'https://placehold.co/120x48/090909/FCFCFC?text=Brand+A', // Dark background, light text
+  'https://placehold.co/120x48/FCFCFC/090909?text=Brand+B', // Light background, dark text
+  'https://placehold.co/150x60/1B1F26/F4F4F4?text=Company+C', // Darker background, lighter text
+  'https://placehold.co/100x40/F4F4F4/1B1F26?text=Partner+D', // Lighter background, darker text
+  'https://placehold.co/130x50/4D4D4D/FCFCFC?text=Client+E', // Mid-gray background, light text
+  'https://placehold.co/110x45/8A8A8A/090909?text=Corp+F',   // Another mid-gray, dark text
+];
+
+// Duplicate the logos to create a seamless infinite scroll effect.
+const duplicatedLogos = [...logos, ...logos];
+---
+
+<div class="relative w-full overflow-hidden py-4">
+  <div class="whitespace-nowrap animate-carousel-move inline-block">
+    {duplicatedLogos.map((logo, index) => (
+      <img
+        src={logo}
+        alt={`Brand Logo ${index + 1}`}
+        class="inline-block h-12 w-auto mx-8 opacity-70 transition-opacity duration-300 hover:opacity-100"
+        width="120"
+        height="48"
+        loading="lazy"
+      />
+    ))}
+  </div>
+</div>
+
+{/* Note: The style for carousel-move is in Layout.astro */}

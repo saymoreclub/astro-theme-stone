@@ -1,7 +1,10 @@
 ---
-import '@fontsource/inter/latin-400.css';
-import '@fontsource/inter/latin-500.css';
-import { ViewTransitions } from 'astro:transitions';
+// Font imports for Plus Jakarta Sans - ensure this package is installed via npm
+import '@fontsource/plus-jakarta-sans/400.css';
+import '@fontsource/plus-jakarta-sans/500.css';
+
+// Removed ViewTransitions import to resolve build error and as per request
+// import { ViewTransitions } from 'astro:transitions'; 
 import Footer from '../components/layout/Footer.astro';
 import Header from '../components/layout/Header.astro';
 
@@ -17,7 +20,7 @@ const { description, title } = Astro.props;
 <html lang="en" x-cloak x-data :class="{ 'dark': $store.theme.isDark }">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /> {/* Added initial-scale for better mobile responsiveness */}
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -25,21 +28,70 @@ const { description, title } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
     <title>{title}</title>
-    <ViewTransitions />
+    {/* Removed ViewTransitions component to resolve build error */}
+    <!-- <ViewTransitions /> -->
+
+    <!-- Preload logo SVGs for smooth theme toggling -->
+    <link rel="preload" href="/assets/LogoWhite.svg" as="image" type="image/svg+xml">
+    <link rel="preload" href="/assets/LogoBlack.svg" as="image" type="image/svg+xml">
+
+    <!-- Global Styles for background gradients, text colors, and carousel animation -->
+    <style is:global>
+      /* Define CSS custom properties (variables) for our new color scheme */
+      :root {
+        /* Light Mode Colors: Use light shades from the new 'primary' scale */
+        --color-bg-start: theme('colors.primary.50');
+        --color-bg-end: theme('colors.primary.300'); /* A slightly darker white */
+        --color-text-body: theme('colors.primary.950'); /* Dark text for light background */
+      }
+
+      html.dark {
+        /* Dark Mode Colors: Use dark shades from the new 'primary' scale */
+        --color-bg-start: theme('colors.primary.950');
+        --color-bg-end: theme('colors.primary.800'); /* A slightly lighter black */
+        --color-text-body: theme('colors.primary.50'); /* Light text for dark background */
+      }
+
+      /* Apply the linear gradient and body text color using the custom properties */
+      body {
+        background-image: linear-gradient(90deg, var(--color-bg-start), var(--color-bg-end));
+        color: var(--color-text-body);
+        transition: background-image 0.5s ease, color 0.5s ease;
+      }
+      
+      /* Alpine.js x-cloak to prevent FOUC (Flash of Unstyled Content) */
+      [x-cloak] {
+        display: none !important;
+      }
+
+      /* Logo Carousel Global Styles */
+      @keyframes carousel-move {
+        0% {
+          transform: translateX(0%);
+        }
+        100% {
+          transform: translateX(-50%);
+        }
+      }
+
+      .animate-carousel-move {
+        animation: carousel-move 60s linear infinite;
+      }
+
+      .animate-carousel-move:hover {
+        animation-play-state: paused;
+      }
+
+      /* IMPORTANT: NO SHIMMER TEXT STYLES HERE, as requested */
+    </style>
   </head>
-  <body
-    class="bg-primary-50 text-primary-950 dark:bg-primary-950 dark:text-primary-200 antialiased transition"
-  >
+  <body class="antialiased transition">
     <Header />
     <main>
       <slot />
     </main>
     <Footer />
-    <style is:global>
-      [x-cloak] {
-        display: none !important;
-      }
-    </style>
+
     <script>
       import Alpine from 'alpinejs';
       import collapse from '@alpinejs/collapse';
